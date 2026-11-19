@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>The Hotline</title>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;800&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  box-sizing: border-box;
+  padding-top: env(safe-area-inset-top, 0px);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+  --bg: #f5f8ff; --surface: #ffffff; --ink: #0e0e0e; --muted: #454f68;
+  --blue: #266de8; --blue-text: #1c56c4; --yellow: #ffe629; --soft: #e6eeff; --paper: #fffdf3;
+  --line: #0e0e0e; --shadow: #0e0e0e; --dot: rgba(38, 109, 232, 0.16);
+  --good-bg: #d9e6ff; --bad-bg: #ffe0dc; --bad: #d2403d; --bad-text: #a8221f;
+  --green: #1f9d57; --green-bg: #d8f3e3; --amber-bg: #fff4a8;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) { --bg: #0b1020; --surface: #151c33; --ink: #f5f8ff; --muted: #aeb9d6; --blue-text: #8db1ff; --soft: #1d2848; --paper: #1b233d; --line: #dfe7ff; --shadow: #2b3a73; --dot: rgba(141, 177, 255, 0.14); --good-bg: #16305f; --bad-bg: #4a2027; --bad: #e0504d; --bad-text: #ff9f9f; --green: #2fb36a; --green-bg: #12392a; --amber-bg: #3d3710; color-scheme: dark; }
+}
+:root[data-theme="dark"] { --bg: #0b1020; --surface: #151c33; --ink: #f5f8ff; --muted: #aeb9d6; --blue-text: #8db1ff; --soft: #1d2848; --paper: #1b233d; --line: #dfe7ff; --shadow: #2b3a73; --dot: rgba(141, 177, 255, 0.14); --good-bg: #16305f; --bad-bg: #4a2027; --bad: #e0504d; --bad-text: #ff9f9f; --green: #2fb36a; --green-bg: #12392a; --amber-bg: #3d3710; color-scheme: dark; }
+html { scroll-padding-top: env(safe-area-inset-top, 0px); height: 100%; }
+*, *::before, *::after { box-sizing: inherit; }
+body { margin: 0; min-height: 100%; background: var(--bg); color: var(--ink); font: 400 17px/1.55 "Instrument Sans", system-ui, -apple-system, "Segoe UI", sans-serif; overflow-x: hidden; }
+body::before { content: ""; position: fixed; inset: 0; z-index: -2; pointer-events: none; background-image: radial-gradient(circle, var(--dot) 2px, transparent 2.6px); background-size: 34px 34px; }
+.deco { position: fixed; inset: 0; z-index: -1; overflow: hidden; pointer-events: none; }
+.deco i { position: absolute; border-radius: 50%; }
+.deco .a { width: 420px; height: 420px; background: var(--yellow); opacity: 0.3; right: -150px; top: -130px; }
+.deco .b { width: 540px; height: 540px; background: var(--blue); opacity: 0.14; left: -220px; bottom: -220px; }
+h1, h2, h3 { font-family: "Bricolage Grotesque", "Instrument Sans", system-ui, sans-serif; margin: 0; line-height: 1.1; }
+button { font: inherit; color: inherit; }
+:focus-visible { outline: 4px solid var(--blue); outline-offset: 3px; }
+.top { background: var(--blue); border-bottom: 3px solid var(--line); }
+.top-in { max-width: 940px; margin: 0 auto; padding: 14px 18px; display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.logo { display: block; height: 34px; width: auto; }
+.top-tag { color: #fff; font-weight: 600; font-size: 15px; }
+.wrap { max-width: 940px; margin: 0 auto; padding: 26px 18px 72px; display: grid; gap: 30px; }
+.card { background: var(--surface); border: 3px solid var(--line); border-radius: 26px; box-shadow: 8px 8px 0 var(--shadow); padding: 26px; }
+.hero { text-align: center; padding: 34px 26px 30px; }
+.title { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 10px 14px; font-size: clamp(42px, 11vw, 72px); font-weight: 800; letter-spacing: -0.03em; }
+.stk { display: inline-block; padding: 6px 20px 10px; border: 3px solid var(--line); border-radius: 18px; box-shadow: 5px 5px 0 var(--shadow); }
+.stk.s1 { background: var(--blue); color: #fff; transform: rotate(-3deg); }
+.stk.s2 { background: var(--yellow); color: #0e0e0e; transform: rotate(2.5deg); }
+.lead { max-width: 34em; margin: 22px auto 0; font-size: 19px; }
+.lamp { display: inline-block; width: 20px; height: 20px; border-radius: 50%; border: 3px solid var(--line); flex: none; }
+.lamp.g { background: var(--green); } .lamp.c { background: var(--yellow); } .lamp.i { background: var(--blue); } .lamp.n { background: var(--bad); }
+.dots { display: flex; gap: 10px; justify-content: center; margin-top: 22px; flex-wrap: wrap; }
+.dot { width: 42px; height: 42px; border-radius: 50%; border: 3px solid var(--line); display: grid; place-items: center; font: 800 17px/1 "Bricolage Grotesque", system-ui, sans-serif; background: var(--surface); transition: background 0.3s; }
+.dot.cur { background: var(--yellow); color: #0e0e0e; } .dot.ok { background: var(--blue); color: #fff; } .dot.no { background: var(--bad); color: #fff; }
+.ptext { margin-top: 10px; font-weight: 600; color: var(--muted); }
+.file { position: relative; padding-top: 38px; margin-top: 12px; }
+.tab { position: absolute; left: 24px; top: -16px; background: var(--yellow); color: #0e0e0e; border: 3px solid var(--line); border-radius: 12px 12px 0 0; padding: 4px 16px; font: 800 17px/1.3 "Bricolage Grotesque", system-ui, sans-serif; }
+.chip { display: inline-block; background: var(--tc, var(--soft)); color: #0e0e0e; border: 2px solid var(--line); border-radius: 999px; padding: 2px 12px; font-weight: 600; font-size: 14px; line-height: 1.5; vertical-align: middle; }
+.t-hr { --tc: #ffb8d0; } .t-marketing { --tc: #d4c2ff; } .t-support { --tc: #a8ccff; } .t-operations { --tc: #ffcf99; } .t-sales { --tc: #ffadad; } .t-revops { --tc: #ffe629; } .t-cs { --tc: #9fe3e6; }
+.file h2 { font-size: clamp(24px, 5vw, 32px); font-weight: 800; letter-spacing: -0.02em; margin-top: 8px; }
+.q { font: 800 20px/1.3 "Bricolage Grotesque", system-ui, sans-serif; margin: 22px 0 12px; }
+.res { margin-top: 22px; display: grid; gap: 12px; }
+.res[hidden] { display: none; }
+.verdict { padding: 14px 18px; border: 3px solid var(--line); border-radius: 18px; box-shadow: 5px 5px 0 var(--shadow); animation: rise 0.35s ease-out; }
+.verdict.right { background: var(--good-bg); } .verdict.wrong { background: var(--bad-bg); }
+.verdict h3 { font-size: 22px; font-weight: 800; }
+.verdict p { margin: 4px 0 0; }
+.box { background: var(--soft); border: 3px solid var(--line); border-radius: 16px; padding: 12px 16px; }
+.box b { font: 800 16px/1.3 "Bricolage Grotesque", system-ui, sans-serif; display: block; margin-bottom: 2px; }
+.remember { display: inline-block; justify-self: start; background: var(--yellow); color: #0e0e0e; border: 3px solid var(--line); border-radius: 14px; padding: 8px 16px; font: 800 18px/1.3 "Bricolage Grotesque", system-ui, sans-serif; box-shadow: 4px 4px 0 var(--shadow); transform: rotate(-1deg); }
+.fixbox { border: 2px dashed var(--line); border-radius: 14px; padding: 10px 14px; background: var(--surface); }
+.fixbox b { font: 800 16px/1.3 "Bricolage Grotesque", system-ui, sans-serif; display: block; }
+.btn { display: inline-flex; cursor: pointer; margin-top: 4px; background: var(--yellow); color: #0e0e0e; border: 3px solid var(--line); border-radius: 16px; padding: 12px 24px; font: 800 19px/1.1 "Bricolage Grotesque", system-ui, sans-serif; box-shadow: 5px 5px 0 var(--shadow); transition: transform 0.12s, box-shadow 0.12s; }
+.btn:hover { transform: translate(-2px, -2px); box-shadow: 7px 7px 0 var(--shadow); }
+.btn:active { transform: translate(3px, 3px); box-shadow: 1px 1px 0 var(--shadow); }
+.tally { text-align: center; }
+.tally[hidden] { display: none; }
+.tally h2 { font-size: clamp(30px, 7vw, 44px); font-weight: 800; letter-spacing: -0.025em; }
+.tally > p { margin: 10px auto 0; max-width: 32em; font-size: 19px; }
+.rows { list-style: none; margin: 22px 0 0; padding: 0; display: grid; gap: 10px; text-align: left; }
+.rows li { display: flex; gap: 12px; align-items: center; background: var(--soft); border: 3px solid var(--line); border-radius: 16px; padding: 10px 14px; font-size: 16px; line-height: 1.35; }
+.rows .mk { flex: none; width: 34px; height: 34px; border-radius: 50%; border: 3px solid var(--line); display: grid; place-items: center; font: 800 16px/1 "Bricolage Grotesque", system-ui, sans-serif; background: var(--blue); color: #fff; }
+.rows .mk.no { background: var(--bad); }
+.rows b { font-family: "Bricolage Grotesque", system-ui, sans-serif; font-weight: 800; }
+.sheet { margin-top: 24px; text-align: left; display: grid; gap: 10px; }
+.sheet h3 { font-size: 22px; font-weight: 800; text-align: center; margin-bottom: 4px; }
+.sheet div { display: flex; gap: 12px; align-items: flex-start; border: 3px solid var(--line); border-radius: 16px; padding: 10px 14px; background: var(--surface); }
+.sheet .lamp { margin-top: 3px; }
+.next { text-align: center; font: 800 20px/1.3 "Bricolage Grotesque", system-ui, sans-serif; margin: 0; }
+@keyframes rise { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes stampIn { 0% { opacity: 0; transform: rotate(-24deg) scale(2.6); } 70% { opacity: 1; transform: rotate(-7deg) scale(0.94); } 100% { opacity: 0.92; transform: rotate(-9deg) scale(1); } }
+@media (max-width: 640px) {
+  .card { padding: 18px; border-radius: 22px; box-shadow: 6px 6px 0 var(--shadow); }
+  .card.file { padding-top: 38px; }
+}
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; } }
+
+.legend { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin: 24px 0 0; text-align: left; }
+.lgt { background: var(--soft); border: 3px solid var(--line); border-radius: 18px; padding: 12px 14px; font-size: 15px; line-height: 1.4; font-weight: 500; }
+.lgt b { display: flex; align-items: center; gap: 10px; font: 800 17px/1.2 "Bricolage Grotesque", system-ui, sans-serif; margin-bottom: 4px; }
+.lgt b i { font-style: normal; width: 30px; height: 30px; border-radius: 50%; border: 3px solid var(--line); display: grid; place-items: center; background: var(--accent); color: #0e0e0e; font-size: 15px; }
+.meta { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; }
+.chat { margin-top: 14px; border: 3px solid var(--line); border-radius: 22px; background: var(--surface); overflow: hidden; }
+.chat-top { display: flex; align-items: center; gap: 14px; padding: 12px 18px; background: var(--soft); border-bottom: 3px solid var(--line); }
+.av { width: 48px; height: 48px; border-radius: 50%; border: 3px solid var(--line); display: grid; place-items: center; font: 800 17px/1 "Bricolage Grotesque", system-ui, sans-serif; background: var(--tc, var(--accent)); color: #0e0e0e; flex: none; }
+.chat-name { font: 800 20px/1.1 "Bricolage Grotesque", system-ui, sans-serif; }
+.chat-sub { font-size: 14px; color: var(--muted); }
+.msgs { padding: 18px; display: grid; gap: 12px; min-height: 150px; max-height: 480px; overflow: auto; background: var(--paper); align-content: start; }
+.b { max-width: 84%; padding: 11px 16px; border: 2px solid var(--line); border-radius: 18px; font-size: 17px; line-height: 1.45; animation: rise 0.3s ease-out; }
+.b.them { justify-self: start; background: var(--surface); border-bottom-left-radius: 6px; }
+.b.me { justify-self: end; background: var(--blue); color: #fff; border-bottom-right-radius: 6px; }
+.b.sys { justify-self: center; background: var(--soft); font-size: 15px; border-style: dashed; color: var(--muted); max-width: 100%; text-align: center; }
+.typing { justify-self: start; display: flex; gap: 6px; padding: 14px 16px; border: 2px solid var(--line); border-radius: 18px; background: var(--surface); border-bottom-left-radius: 6px; }
+.typing i { width: 9px; height: 9px; border-radius: 50%; background: var(--muted); animation: blink 1s infinite; }
+.typing i:nth-child(2) { animation-delay: 0.15s; } .typing i:nth-child(3) { animation-delay: 0.3s; }
+@keyframes blink { 0%, 60%, 100% { opacity: 0.25; transform: translateY(0); } 30% { opacity: 1; transform: translateY(-3px); } }
+.asks { padding: 14px 18px 18px; border-top: 3px solid var(--line); background: var(--surface); }
+.asks-h { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 14px; margin-bottom: 10px; font: 800 17px/1.2 "Bricolage Grotesque", system-ui, sans-serif; }
+.coins { display: inline-flex; gap: 6px; }
+.coin { width: 22px; height: 22px; border-radius: 50%; border: 2px solid var(--line); background: var(--accent); transition: background 0.3s; }
+.coin.used { background: var(--hair, var(--soft)); }
+.chips { display: flex; flex-wrap: wrap; gap: 10px; }
+.chipq { cursor: pointer; background: var(--surface); border: 2px solid var(--line); border-radius: 999px; padding: 8px 16px; font-size: 16px; font-weight: 600; box-shadow: 3px 3px 0 var(--shadow); transition: transform 0.12s, box-shadow 0.12s; }
+.chipq:hover:not([disabled]) { transform: translate(-1px, -1px); box-shadow: 4px 4px 0 var(--shadow); }
+.chipq[disabled] { opacity: 0.42; box-shadow: none; cursor: default; }
+.ready { margin-top: 12px; }
+.rule { margin-top: 18px; display: grid; gap: 12px; }
+.rule[hidden], .asks[hidden] { display: none; }
+.step-q { font: 800 20px/1.3 "Bricolage Grotesque", system-ui, sans-serif; }
+.opts { display: grid; gap: 10px; }
+.opt { cursor: pointer; text-align: left; background: var(--surface); border: 3px solid var(--line); border-radius: 16px; padding: 12px 16px; font-size: 17px; line-height: 1.4; box-shadow: 4px 4px 0 var(--shadow); display: flex; gap: 12px; align-items: flex-start; transition: transform 0.12s, box-shadow 0.12s; }
+.opt .lt { flex: none; width: 30px; height: 30px; border-radius: 50%; border: 2px solid var(--line); display: grid; place-items: center; font: 800 15px/1 "Bricolage Grotesque", system-ui, sans-serif; background: var(--accent); color: #0e0e0e; }
+.opt:hover:not([disabled]) { transform: translate(-2px, -2px); box-shadow: 6px 6px 0 var(--shadow); }
+.opt[disabled] { cursor: default; box-shadow: none; }
+.opt.good { background: var(--good-bg); } .opt.bad { background: var(--bad-bg); }
+.opt.dim { opacity: 0.55; }
+.locks { display: flex; gap: 10px; justify-content: center; margin-top: 20px; flex-wrap: wrap; }
+.lock { border: 3px solid var(--line); border-radius: 16px; padding: 8px 16px; font-weight: 600; background: var(--surface); font-size: 16px; }
+.lock.ok { background: var(--blue); color: #fff; } .lock.no { background: var(--bad); color: #fff; }
+.facts { margin: 6px 0 0; padding: 0; list-style: none; display: grid; gap: 6px; }
+.facts li { font-size: 16px; line-height: 1.4; }
+@media (max-width: 760px) { .legend { grid-template-columns: 1fr; } .b { max-width: 94%; } }
+
+</style>
+</head>
+<body>
+<div class="deco" aria-hidden="true"><i class="a"></i><i class="b"></i></div>
+<header class="top">
+  <div class="top-in">
+    <svg class="logo" role="img" aria-label="TaxDome" viewBox="0 0 120 32" width="128" height="34"><path d="M10.5356 3.37849C11.3829 2.90571 12.4132 2.87566 13.2834 3.28941L13.4548 3.37849L15.1444 4.32389C15.4687 4.50548 15.5262 4.91904 15.3533 5.20702C15.1864 5.48465 14.8167 5.62805 14.5061 5.45511L12.7885 4.49918V4.49822C12.2924 4.22151 11.6808 4.22162 11.1845 4.49822L2.10366 9.58055C1.60913 9.85854 1.30614 10.3687 1.30456 10.9187V21.0814L1.31996 21.2854C1.38689 21.7565 1.67502 22.1779 2.1104 22.4195H2.11136L11.1922 27.5019C11.6886 27.7787 12.3 27.7787 12.7962 27.5019L21.8771 22.4195L22.0533 22.3056C22.4426 22.0144 22.675 21.5636 22.6762 21.0824V10.9187C22.6748 10.4376 22.4424 9.98688 22.0533 9.6955L21.8771 9.58055L21.1598 9.17922C20.8382 8.99902 20.7781 8.58995 20.947 8.30183C21.1128 8.0197 21.4858 7.87303 21.7991 8.048L22.5366 8.45987L22.7012 8.56045C23.5066 9.08438 23.9979 9.96591 24 10.9177V21.0824C24 22.0955 23.4459 23.031 22.5472 23.5402H22.5462L13.4653 28.6226H13.4644C12.5605 29.1259 11.4491 29.126 10.5453 28.6226L1.46341 23.5402C0.560342 23.0338 0.00167075 22.0978 1.89029e-07 21.0824V10.9187C-0.000373914 9.90528 0.554559 8.96976 1.45379 8.46083V8.45987L10.5356 3.37849ZM11.4811 14.6073H8.85655V19.6916H7.16399V14.6073H4.53947V13.0757H11.4811V14.6073ZM15.5324 13.0757C17.6291 13.0757 19.1514 14.4655 19.1515 16.3822C19.1515 18.2991 17.6292 19.6916 15.5324 19.6916H12.8434V13.0757H15.5324ZM14.5359 18.1887H15.5324V18.1849C16.6441 18.1848 17.3904 17.4692 17.3906 16.3918C17.3906 15.3141 16.6443 14.5902 15.5324 14.5901H14.5359V18.1887ZM18.1271 5.36315C18.9244 5.36341 19.5712 5.98965 19.5712 6.76257C19.5712 7.53545 18.9244 8.16173 18.1271 8.16198C17.3295 8.16198 16.683 7.53561 16.6829 6.76257C16.6829 5.9895 17.3295 5.36315 18.1271 5.36315Z" fill="#FFFFFF"/><path d="M88.0975 9.99988C91.8513 9.99988 94.5377 12.6691 94.5377 16.0003C94.5375 19.3313 91.8088 21.9997 88.0553 21.9999C84.3017 21.9999 81.6154 19.3314 81.6151 16.0003C81.6151 12.7024 84.3439 10.0001 88.0975 9.99988ZM120 12.4586H113.399V14.8118H119.136V17.0947H113.399V19.5332H120V21.8021H110.74V10.1862H120V12.4586ZM54.2883 21.8012H51.4946L50.3843 19.1983H45.2374L44.1271 21.8012H41.398L46.6059 10.1159H49.075L54.2883 21.8012ZM41.7881 12.5527H37.2339V21.7995H34.5506L34.5569 12.5527H30V10.1985H41.7881V12.5527ZM61.0577 13.96L63.6316 10.1985H66.671L62.5958 15.8658L66.8378 21.7995H63.7168L60.9859 17.8235L58.2407 21.7995H55.2004L59.4398 15.8992L55.3753 10.1985H58.5035L61.0577 13.96ZM73.4736 10.1985C77.2969 10.1987 79.9398 12.7015 79.9398 15.9994C79.9394 19.297 77.2967 21.7993 73.4736 21.7995H68.7293V10.1985H73.4736ZM102.509 15.094L105.705 10.1862H108.589V21.7924H105.931V14.2185L102.509 19.172H102.44L99.0506 14.28V21.7924H96.4265V10.1862H99.3116L102.509 15.094ZM88.0661 12.3531C85.9117 12.3531 84.417 13.9773 84.4169 15.9986C84.4171 18.0196 85.9466 19.6528 88.1011 19.6528C90.2553 19.6526 91.7492 18.0195 91.7494 15.9986C91.7493 14.0107 90.2204 12.3533 88.0661 12.3531ZM71.4055 19.4963H73.4736C75.6628 19.4963 77.1414 18.0861 77.1417 15.9986C77.1417 13.9108 75.6631 12.5008 73.4736 12.5008H71.4055V19.4963ZM46.1979 16.9435H49.4175L47.8077 13.1829L46.1979 16.9435Z" fill="#FFFFFF"/></svg>
+    <span class="top-tag">AI Security course</span>
+  </div>
+</header>
+<main class="wrap">
+  <section class="card hero" aria-labelledby="pageTitle">
+    <h1 class="title" id="pageTitle"><span class="stk s1">The</span><span class="stk s2">Hotline</span></h1>
+    <p class="lead">Colleagues keep messaging you: “Can I use this?” Ask them what you need to know, then rule with the three checks and tell them what to do.</p>
+    <div class="legend">
+      <div class="lgt"><b><i>1</i>The task</b>Is this kind of task covered by the AI Usage Policy?</div>
+      <div class="lgt"><b><i>2</i>The tool</b>Is the tool one the policy lists?</div>
+      <div class="lgt"><b><i>3</i>The data</b>Which class goes in, and may this tool take it?</div>
+    </div>
+    <div class="dots" id="dots" aria-hidden="true"></div>
+    <div class="ptext" id="ptext" role="status">Call 1 of 4</div>
+  </section>
+
+  <div id="stage"></div>
+
+  <section class="card tally" id="tally" role="status" hidden>
+    <h2 id="tHead"></h2>
+    <p id="tText"></p>
+    <ul class="rows" id="rows"></ul>
+    <div class="sheet">
+      <h3>The decision model in your pocket</h3>
+      <div><span><b>1. The task:</b> prohibited, stop. Silent, ask InfoSec. Permitted, go on to check 2.</span></div>
+      <div><span><b>2. The tool:</b> on the policy’s list, go on to check 3. New, vet it, ask InfoSec and wait.</span></div>
+      <div><span><b>3. The data:</b> name the class and match it to the tool’s tier. If it doesn’t fit, anonymize first or pick another tool.</span></div>
+    </div>
+    <button type="button" class="btn" id="again" style="margin-top:22px">Take the calls again</button>
+  </section>
+
+  <p class="next">Next: Game 2, Blast radius.</p>
+</main>
+
+<script>
+(function () {
+  "use strict";
+
+  var CASES = [
+    { key: "1", who: "Priya", ini: "PR", team: "HR", cls: "hr", role: "Recruiting",
+      open: "Hi! I want to use Claude to draft a job description for our new Customer Success role. Okay to go ahead?",
+      qs: [
+        { q: "Which tool will you use?", a: "The company Claude Team seat, signed in with my TaxDome email.", k: 0 },
+        { q: "What will you paste in?", a: "The role requirements, plus last year’s job post as an example. It still has the previous hiring manager’s name and email at the bottom.", k: 1 },
+        { q: "Is any client data involved?", a: "No, nothing about clients.", k: 0 },
+        { q: "What happens to the result?", a: "I’ll edit it myself and post it on our careers page.", k: 0 },
+        { q: "Is that tool one the policy lists?", a: "Yes, the Team seat is the tool we are all given.", k: 0 }
+      ],
+      checks: ["Check 1: task type", "Check 2: tool vetting", "Check 3: data", "No check needed: Claude is always safe to use"], right: 0,
+      ruleWhy: "The tool is your approved Team seat and no client data is involved, so what is left is the task. HR-related writing is allowed, but personal data rules apply to what you paste in.",
+      replies: [
+        { t: "Anonymize any real employee data in the examples, then go ahead.", ok: 1, react: "Priya swaps the old manager’s name and email for placeholders and has a draft in five minutes." },
+        { t: "Submit a vetting request to InfoSec before you start.", ok: 0, react: "Priya waits two days for InfoSec to confirm what the policy already settles: the Team seat is approved." },
+        { t: "Ask your manager to confirm this use case is permitted.", ok: 0, react: "Her manager says, “Why ask me? The policy covers this.” The job post slips a day." },
+        { t: "Use a different tool: Claude isn’t approved for HR tasks.", ok: 0, react: "Priya writes it all by hand. Claude is approved for this task, so the detour cost her an afternoon." }
+      ],
+      why: "Check 1 is about the task. Drafting a job description is permitted, so you do not stop. You do take care with what goes in: an example with a real name and email is employee data, so anonymize it first." },
+
+    { key: "2", who: "Marcus", ini: "MA", team: "Sales", cls: "sales", role: "Account executive",
+      open: "A friend at another company swears by this Chrome extension that summarizes emails. It has 4.7 stars. I’d like to try it on my inbox. OK?",
+      qs: [
+        { q: "Is it one the policy lists?", a: "I searched the AI Usage Policy. It isn’t there.", k: 1 },
+        { q: "Who built it?", a: "A small startup. I found a landing page but no security page.", k: 1 },
+        { q: "What does it ask to access?", a: "It wants to “read and change all your data on all websites”.", k: 0 },
+        { q: "What do its privacy terms say?", a: "Inputs may be used to improve its models.", k: 0 },
+        { q: "What would you use it on?", a: "My work inbox. Most of it is customer emails.", k: 0 }
+      ],
+      checks: ["Check 1: task type", "Check 2: tool vetting", "Check 3: data", "No check needed: a colleague’s recommendation counts as informal approval"], right: 1,
+      ruleWhy: "Summarizing emails is an ordinary task, but the tool is new and unlisted. That makes it a Check 2 question: vet it before it sees any company data.",
+      replies: [
+        { t: "Try it on low-risk emails first, then decide.", ok: 0, react: "Marcus tries it for a week. The extension could see every tab, including customer emails he never meant to share." },
+        { t: "Run the AI tool vetter, ask InfoSec, and do not use it until they answer.", ok: 1, react: "Marcus runs the vetter and gets a Red: unknown maker, access to every site and training on inputs. He sends the scorecard to InfoSec and keeps the extension off his work browser." },
+        { t: "Use it only for internal emails where no client data is involved.", ok: 0, react: "Marcus sticks to internal emails. The extension still sees every tab, including the customer ones open next to it." },
+        { t: "Ask your friend to forward the InfoSec approval they received.", ok: 0, react: "His friend works at another company, so that approval means nothing here. Marcus loses a day finding that out." }
+      ],
+      why: "Check 2 is about the tool. It isn’t on the policy’s list, its maker is unknown and it can read every site. Another company’s approval, a star rating or a “low-risk” trial doesn’t change that. Vet it, ask InfoSec, wait." },
+
+    { key: "3", who: "Dana", ini: "DA", team: "Support", cls: "support", role: "Support specialist",
+      open: "Can I paste this ticket into Claude to summarize it? It has the customer’s name and account ID in it. I’m on the Team seat.",
+      qs: [
+        { q: "Which tool, and which account?", a: "Claude on my Team seat, with my company email, like always.", k: 0 },
+        { q: "What exactly is in the ticket?", a: "The customer’s name, their account ID and a billing complaint. No card numbers.", k: 1 },
+        { q: "Does Claude need to know who the customer is?", a: "Not really. It just needs to know what happened.", k: 1 },
+        { q: "Is summarizing tickets allowed?", a: "Yes, it’s one of our standard uses.", k: 0 },
+        { q: "Where will the summary go?", a: "Into my internal handover notes.", k: 0 }
+      ],
+      checks: ["Check 1: task type", "Check 2: tool vetting", "Check 3: data", "No check needed: Claude is approved for support tasks"], right: 2,
+      ruleWhy: "The task is standard and the tool is your approved seat. What is left is the data: the ticket carries a name and an account ID that the AI does not need.",
+      replies: [
+        { t: "Go ahead: Claude is approved, so the data is safe to include.", ok: 0, react: "Dana pastes the lot. The summary is fine, but a customer’s name and account ID now sit in a prompt that never needed them." },
+        { t: "Remove only the customer’s name before pasting.", ok: 0, react: "Dana deletes the name. The account ID still points to one customer, so the ticket is as traceable as before." },
+        { t: "Replace the name and account ID with placeholders before pasting.", ok: 1, react: "Dana swaps in [CUSTOMER] and [ACCOUNT ID]. The summary is just as good, and nothing in it points to anyone." },
+        { t: "Ask the account manager to review it before you submit.", ok: 0, react: "The account manager says, “I can’t take the details out for you. Do that first.” Dana loses an hour." }
+      ],
+      why: "Check 3 is about the data. The AI does not need to know who the customer is. It needs to know what happened, so replace the name and the account ID with placeholders. Removing only the name leaves the account ID, which still identifies the customer." },
+
+    { key: "4", who: "Lena", ini: "LE", team: "HR", cls: "hr", role: "People Ops",
+      open: "I’d like to use AI to find patterns in our latest HR survey responses. Does the policy say anything about it?",
+      qs: [
+        { q: "What does the AI Usage Policy say about it?", a: "I searched it. There is nothing about analyzing survey responses.", k: 1 },
+        { q: "Which tool would you use?", a: "The Claude Team seat.", k: 0 },
+        { q: "What data is in the responses?", a: "About 400 free-text answers. Some name managers and teammates.", k: 0 },
+        { q: "Is the survey anonymous?", a: "It is meant to be, but each response has a team and an age band.", k: 0 },
+        { q: "How would you use the result?", a: "A summary for leadership.", k: 0 }
+      ],
+      checks: ["Check 1: the task (the policy is silent)", "Check 2: tool vetting", "Check 3: data", "No check needed: if it’s not prohibited, it’s permitted"], right: 0,
+      ruleWhy: "The tool is approved, but the policy says nothing about this kind of task. That is Check 1: silence is not permission.",
+      replies: [
+        { t: "Apply the internal documentation section of the policy and proceed with anonymized data.", ok: 0, react: "Lena borrows a section written for something else. Nobody has looked at her actual use case." },
+        { t: "Ask your manager to make the call.", ok: 0, react: "Her manager says, “I don’t decide what the policy doesn’t cover. InfoSec does.” Two days lost." },
+        { t: "Proceed: HR survey data is aggregate and low risk.", ok: 0, react: "Lena runs it. Free-text answers with a team and an age band can point to real people, and nobody checked." },
+        { t: "Contact InfoSec before proceeding: this use case hasn’t been evaluated.", ok: 1, react: "InfoSec asks a few questions about the data and the purpose. Lena has an answer within the week, and a rule for next time." }
+      ],
+      why: "Check 1 is about the task. When the policy is silent, you ask InfoSec before you go on. “Not prohibited” is not the same as “permitted”, and the survey’s team and age fields could point to real people." }
+  ];
+  var BUDGET = 3, LET = ["A", "B", "C", "D"];
+
+  var $ = function (s) { return document.querySelector(s); };
+  var stage = $("#stage"), dotsEl = $("#dots"), ptext = $("#ptext"), tally = $("#tally");
+  var cur = 0, log = [], S = null;
+
+  function esc(s) { return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;"); }
+
+  function drawDots() {
+    dotsEl.innerHTML = "";
+    CASES.forEach(function (c, n) {
+      var d = document.createElement("span"), r = log[n];
+      d.className = "dot" + (r ? (r.pts >= 2 ? " ok" : " no") : (n === cur ? " cur" : ""));
+      d.textContent = r ? String(r.pts) : c.key;
+      dotsEl.appendChild(d);
+    });
+  }
+
+  function scroll() { var m = $("#msgs"); if (m) { m.scrollTop = m.scrollHeight; } }
+  function bubble(cls, html) { var m = $("#msgs"), b = document.createElement("div"); b.className = "b " + cls; b.innerHTML = html; m.appendChild(b); scroll(); return b; }
+  function typing(then, ms) {
+    var m = $("#msgs"), t = document.createElement("div"); t.className = "typing"; t.innerHTML = "<i></i><i></i><i></i>"; m.appendChild(t); scroll();
+    setTimeout(function () { m.removeChild(t); then(); }, ms || 750);
+  }
+
+  function show() {
+    var c = CASES[cur];
+    S = { coins: BUDGET, asked: [], ruled: null, replied: null, busy: false };
+    tally.hidden = true;
+    ptext.textContent = "Call " + (cur + 1) + " of " + CASES.length;
+    drawDots();
+    stage.innerHTML =
+      '<article class="card file">' +
+        '<span class="tab">Call ' + c.key + '</span>' +
+        '<div class="meta"><span class="chip t-' + c.cls + '">' + esc(c.team) + '</span><span class="clock">' + esc(c.who) + ', ' + esc(c.role) + '</span></div>' +
+        '<div class="chat">' +
+          '<div class="chat-top"><span class="av t-' + c.cls + '">' + c.ini + '</span><div><div class="chat-name">' + esc(c.who) + '</div><div class="chat-sub">Wants to know: can I use this?</div></div></div>' +
+          '<div class="msgs" id="msgs" aria-live="polite"></div>' +
+          '<div class="asks" id="asks" hidden>' +
+            '<div class="asks-h"><span>Ask them</span><span class="coins" id="coins" aria-label="Questions left"></span><span id="cl" style="font-weight:600;color:var(--muted)"></span></div>' +
+            '<div class="chips" id="chips"></div>' +
+            '<div class="ready"><button type="button" class="btn" id="ready">I’m ready to rule</button></div>' +
+          '</div>' +
+        '</div>' +
+        '<div class="rule" id="rule" hidden></div>' +
+      '</article>';
+    typing(function () {
+      bubble("them", esc(c.open));
+      $("#asks").hidden = false;
+      drawAsks();
+    }, 900);
+  }
+
+  function drawAsks() {
+    var c = CASES[cur], coins = $("#coins"), chips = $("#chips");
+    coins.innerHTML = "";
+    for (var i = 0; i < BUDGET; i++) { var k = document.createElement("span"); k.className = "coin" + (i >= S.coins ? " used" : ""); coins.appendChild(k); }
+    $("#cl").textContent = S.coins + " of " + BUDGET + " questions left";
+    chips.innerHTML = "";
+    c.qs.forEach(function (x, i) {
+      var b = document.createElement("button");
+      b.type = "button"; b.className = "chipq"; b.textContent = x.q;
+      b.disabled = S.asked.indexOf(i) > -1 || S.coins === 0 || S.busy || !!S.ruled;
+      b.addEventListener("click", function () { ask(i); });
+      chips.appendChild(b);
+    });
+  }
+
+  function ask(i) {
+    if (S.busy || S.coins === 0 || S.ruled) return;
+    var c = CASES[cur], x = c.qs[i];
+    S.busy = true; S.coins--; S.asked.push(i);
+    bubble("me", esc(x.q)); drawAsks();
+    typing(function () {
+      bubble("them", esc(x.a)); S.busy = false; drawAsks();
+      if (S.coins === 0) { $("#cl").textContent = "No questions left. Time to rule."; startRule(); }
+    }, 800);
+  }
+
+  function startRule() {
+    if (S.ruled !== null || S.ruling) return;
+    S.ruling = true;
+    var c = CASES[cur], rule = $("#rule");
+    $("#ready").disabled = true;
+    Array.prototype.forEach.call(document.querySelectorAll(".chipq"), function (b) { b.disabled = true; });
+    rule.hidden = false;
+    rule.innerHTML = '<p class="step-q">Which check applies?</p><div class="opts" id="o1"></div><div id="fb1"></div>';
+    var o1 = $("#o1");
+    c.checks.forEach(function (t, i) {
+      var b = document.createElement("button"); b.type = "button"; b.className = "opt";
+      b.innerHTML = '<span class="lt">' + LET[i] + '</span><span>' + esc(t) + '</span>';
+      b.addEventListener("click", function () { doRule(i); });
+      o1.appendChild(b);
+    });
+    rule.scrollIntoView({ behavior: "smooth", block: "nearest" });
+  }
+
+  function doRule(i) {
+    if (S.ruled !== null) return;
+    var c = CASES[cur], ok = (i === c.right);
+    S.ruled = i;
+    Array.prototype.forEach.call(document.querySelectorAll("#o1 .opt"), function (b, n) {
+      b.disabled = true;
+      if (n === c.right) { b.classList.add("good"); } else if (n === i) { b.classList.add("bad"); } else { b.classList.add("dim"); }
+    });
+    $("#fb1").innerHTML = '<div class="verdict ' + (ok ? "right" : "wrong") + '"><h3>' + (ok ? "Right: that’s the check that applies." : "Not quite. The check that applies: " + esc(c.checks[c.right]) + ".") + '</h3><p>' + esc(c.ruleWhy) + '</p></div>' +
+      '<p class="step-q" style="margin-top:8px">What do you tell ' + esc(c.who) + '?</p><div class="opts" id="o2"></div><div id="fb2"></div>';
+    var o2 = $("#o2");
+    c.replies.forEach(function (r, n) {
+      var b = document.createElement("button"); b.type = "button"; b.className = "opt";
+      b.innerHTML = '<span class="lt">' + LET[n] + '</span><span>' + esc(r.t) + '</span>';
+      b.addEventListener("click", function () { doReply(n); });
+      o2.appendChild(b);
+    });
+    $("#fb1").scrollIntoView({ behavior: "smooth", block: "nearest" });
+  }
+
+  function doReply(n) {
+    if (S.replied !== null) return;
+    var c = CASES[cur], r = c.replies[n], ruleOk = (S.ruled === c.right);
+    S.replied = n;
+    Array.prototype.forEach.call(document.querySelectorAll("#o2 .opt"), function (b, k) {
+      b.disabled = true;
+      if (c.replies[k].ok) { b.classList.add("good"); } else if (k === n) { b.classList.add("bad"); } else { b.classList.add("dim"); }
+    });
+    var sharp = S.asked.some(function (i) { return c.qs[i].k === 1; });
+    var pts = (ruleOk ? 1 : 0) + (r.ok ? 1 : 0) + (sharp ? 1 : 0);
+    log[cur] = { ruleOk: ruleOk, replyOk: !!r.ok, sharp: sharp, pts: pts };
+    drawDots();
+    bubble("me", esc(r.t));
+    typing(function () {
+      bubble("them", esc(r.react));
+      var last = (cur === CASES.length - 1), keyQ = c.qs.map(function (x, i) { return x.k ? '<li>' + (S.asked.indexOf(i) > -1 ? "\u2713 You asked: " : "\u2717 You didn’t ask: ") + esc(x.q) + '</li>' : ""; }).join("");
+      $("#fb2").innerHTML =
+        '<div class="verdict ' + (r.ok ? "right" : "wrong") + '"><h3>' + (r.ok ? "Right reply." : "Not the best reply.") + '</h3></div>' +
+        '<div class="box"><b>Why</b>' + esc(c.why) + '</div>' +
+        '<div class="box"><b>The questions that settled it</b><ul class="facts">' + keyQ + '</ul></div>' +
+        '<div><button type="button" class="btn" id="nextBtn">' + (last ? "See how your calls went" : "Next call") + '</button></div>';
+      $("#nextBtn").addEventListener("click", function () { if (last) { finish(); } else { cur++; show(); stage.scrollIntoView({ behavior: "smooth", block: "start" }); } });
+      $("#nextBtn").focus({ preventScroll: true });
+      $("#fb2").scrollIntoView({ behavior: "smooth", block: "nearest" });
+    }, 900);
+  }
+
+  function finish() {
+    stage.innerHTML = "";
+    ptext.textContent = "Hotline closed";
+    drawDots();
+    tally.hidden = false;
+    var rules = log.filter(function (l) { return l.ruleOk; }).length, reps = log.filter(function (l) { return l.replyOk; }).length, sharp = log.filter(function (l) { return l.sharp; }).length;
+    var total = rules + reps + sharp;
+    $("#tHead").textContent = total + " of " + (CASES.length * 3) + " points";
+    $("#tText").textContent = (total >= 11 ? "Hotline hero. " : total >= 8 ? "Solid shift. " : "Busy shift. ") + "Right checks: " + rules + " of 4. Right replies: " + reps + " of 4. Calls where you asked a question that settled it: " + sharp + " of 4.";
+    $("#rows").innerHTML = CASES.map(function (c, n) {
+      var l = log[n];
+      return '<li><span class="mk' + (l.pts >= 2 ? "" : " no") + '">' + l.pts + '</span><span><b>' + c.key + ". " + esc(c.who) + " (" + esc(c.team) + ")</b><br>Check: " + (l.ruleOk ? "right" : "missed") + ". Reply: " + (l.replyOk ? "right" : "missed") + ". Settling question: " + (l.sharp ? "asked" : "not asked") + ".</span></li>";
+    }).join("");
+    tally.scrollIntoView({ behavior: "smooth", block: "nearest" });
+  }
+
+  document.addEventListener("click", function (e) { if (e.target && e.target.id === "ready") { startRule(); } });
+  $("#again").addEventListener("click", function () { cur = 0; log = []; show(); window.scrollTo({ top: 0, behavior: "smooth" }); });
+  show();
+})();
+</script>
+</body>
+</html>
